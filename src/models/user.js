@@ -41,6 +41,11 @@ const userSchema = new mongoose.Schema({
         quantity: { type: Number },
         addedToCart: { type: Date }
     }],
+    paymentCards: [{
+        cardName: { type: String, requied: true, index: true, trim: true },
+        cardNumber: { type: String, required: true, index: true, trim: true },
+        expiryDate: { type: Date, requied: true, trim: true },
+    }],
     password: {
         type: String,
         required: true,
