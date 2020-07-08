@@ -29,21 +29,20 @@ const userSchema = new mongoose.Schema({
         }
     },
     addresses: [{
-        street: { type: String, required: true },
-        city: { type: String, required: true },
-        state: { type: String, required: true },
-        country: { type: String, required: true },
-        zip: { type: String, required: true },
-        required: false
+        street: { type: String, trim: true, required: true },
+        city: { type: String, trim: true, required: true },
+        state: { type: String, trim: true, required: true },
+        country: { type: String, trim: true, required: true },
+        zip: { type: String, trim: true, required: true },
     }],
     cart: [{
         productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-        quantity: { type: Number },
+        quantity: { type: Number, trim: true },
         addedToCart: { type: Date }
     }],
     paymentCards: [{
-        cardName: { type: String, requied: true, index: true, trim: true },
-        cardNumber: { type: String, required: true, index: true, trim: true },
+        cardName: { type: String, requied: true, trim: true },
+        cardNumber: { type: String, required: true, trim: true },
         expiryDate: { type: Date, requied: true, trim: true },
     }],
     password: {
