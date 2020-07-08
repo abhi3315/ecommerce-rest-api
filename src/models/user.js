@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const validator = require('validator')
+const jwt = require('jsonwebtoken')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -28,23 +29,28 @@ const userSchema = new mongoose.Schema({
                 throw new Error('Provide a valid phone number')
         }
     },
-    addresses: [{
+    address: {
         street: { type: String, trim: true, required: true },
         city: { type: String, trim: true, required: true },
         state: { type: String, trim: true, required: true },
         country: { type: String, trim: true, required: true },
         zip: { type: String, trim: true, required: true },
-    }],
+    },
     cart: [{
         productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
         quantity: { type: Number, trim: true },
         addedToCart: { type: Date }
     }],
-    paymentCards: [{
+    paymentCard: {
         cardName: { type: String, requied: true, trim: true },
-        cardNumber: { type: String, required: true, trim: true },
+        cardNumber: {
+            type: Number, required: true, trim: true,
+            validate(value) {
+                if ((value + '').length === 16) throw new Error('Card number must be of length 16.')
+            }
+        },
         expiryDate: { type: Date, requied: true, trim: true },
-    }],
+    },
     password: {
         type: String,
         required: true,

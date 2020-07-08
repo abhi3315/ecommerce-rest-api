@@ -31,14 +31,14 @@ const providerSchema = mongoose.Schema({
                 throw new Error('Provide a valid phone number')
         }
     },
-    addresses: [{
+    address: {
         street: { type: String, trim: true, required: true },
         city: { type: String, trim: true, required: true },
         state: { type: String, trim: true, required: true },
         country: { type: String, trim: true, required: true },
         zip: { type: String, trim: true, required: true },
-    }],
-    banksAccounts: [{
+    },
+    banksAccount: {
         bankName: { type: String, requied: true, trim: true },
         bankAddress: {
             street: { type: String, requied: true, trim: true },
@@ -47,8 +47,8 @@ const providerSchema = mongoose.Schema({
             country: { type: String, required: true, trim: true },
             zip: { type: String, required: true, trim: true },
         }, requied: true,
-        account_number: { type: String, required: true, index: true, trim: true },
-    }],
+        accountNumber: { type: Number, required: true, trim: true },
+    },
     password: {
         type: String,
         required: true,
