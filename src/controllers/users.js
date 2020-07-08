@@ -48,7 +48,7 @@ userController.profile = async (req, res) => {
 
 userController.update = async (req, res) => {
     const updates = Object.keys(req.body)
-    const allowedUpdates = ['name', 'mobile', 'paymentCard', 'password', 'address']
+    const allowedUpdates = ['name', 'mobile', 'email', 'paymentCard', 'password', 'address']
     const isValidUpdate = updates.every(update => allowedUpdates.includes(update))
 
     if (!isValidUpdate) return res.status(400).send({ error: "Invalid update!" })
