@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const Product = require('../models/product')
 const userController = {}
 
 userController.create = async (req, res) => {
@@ -44,6 +45,32 @@ userController.logoutAll = async (req, res) => {
 
 userController.profile = async (req, res) => {
     res.send(req.user)
+}
+
+userController.addProductToCart = async (req, res) => {
+    try {
+        res.user.cart.concate([{
+            productId: req.params.productId,
+            quantity: req.query.quantity,
+            addedToCart: new Date()
+        }])
+        await req.user.save()
+        const product = await Product.findById({ _id: req.params.productId })
+        product.stock = product.stock - 1
+        await product.save()
+        res.send(req.user)
+    } catch (e) {
+        res.status(500).send()
+    }
+}
+
+userController.getCartProducts = async (req, res) => {
+    try {
+        await req.user.populate('cart.productId').execPopulate()
+        res.send(user.cart)
+    } catch (e) {
+        res.status(500).send()
+    }
 }
 
 userController.update = async (req, res) => {
