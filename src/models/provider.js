@@ -72,6 +72,12 @@ const providerSchema = mongoose.Schema({
     timestamps: true
 })
 
+providerSchema.virtual('products', {
+    ref: 'Product',
+    localField: '_id',
+    foreignField: 'addedBy'
+})
+
 providerSchema.methods.toJSON = function () {
     const providerObj = this.toObject()
     delete providerObj.password
