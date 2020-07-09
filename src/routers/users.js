@@ -14,8 +14,8 @@ router.get('/users/cart', userAuth, userController.getCartProducts)
 
 router.patch('/users/me', userAuth, userController.update)
 
+router.delete('/users/cart/removeAll',userAuth,userController.emptyCart)
 router.delete('/users/cart/:productId', userAuth, userController.removeProductFromCart)
-router.delete('/users/cart',userAuth,userController.emptyCart)
 router.delete('/users/me', userAuth, userController.delete)
 
 module.exports = router

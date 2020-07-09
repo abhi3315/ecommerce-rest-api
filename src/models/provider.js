@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
+const Product = require('./product')
 
 const providerSchema = mongoose.Schema({
     name: {
@@ -41,15 +42,15 @@ const providerSchema = mongoose.Schema({
         country: { type: String, trim: true, required: true },
         zip: { type: String, trim: true, required: true },
     },
-    banksAccount: {
-        bankName: { type: String, requied: true, trim: true },
+    bankAccount: {
+        bankName: { type: String, required: true, trim: true },
         bankAddress: {
-            street: { type: String, requied: true, trim: true },
+            street: { type: String, required: true, trim: true },
             city: { type: String, required: true, trim: true },
             state: { type: String, required: true, trim: true },
             country: { type: String, required: true, trim: true },
             zip: { type: String, required: true, trim: true },
-        }, requied: true,
+        },
         accountNumber: { type: Number, required: true, trim: true },
     },
     password: {
@@ -93,21 +94,27 @@ providerSchema.methods.generateAuthToken = async function () {
 }
 
 providerSchema.statics.findByCredentials = async (email, password) => {
-    const user = await User.findOne({ email })
-    if (!user) throw new Error('No user found with this email!')
+    const provider = await Provider.findOne({ email })
+    if (!provider) throw new Error('No provider found with this email!')
 
-    const isMatch = await bcrypt.compare(password, user.password)
+    const isMatch = await bcrypt.compare(password, provider.password)
     if (!isMatch) throw new Error('Incorrect password!')
 
-    return user
+    return provider
 }
 
 providerSchema.pre('save', async function (next) {
-    const user = this
+    const provider = this
 
-    if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, 8)
+    if (provider.isModified('password')) {
+        provider.password = await bcrypt.hash(provider.password, 8)
     }
+
+    next()
+})
+
+providerSchema.pre('delete', async function (next) {
+    await Product.deleteMany({ addedBy: this._id })
 
     next()
 })

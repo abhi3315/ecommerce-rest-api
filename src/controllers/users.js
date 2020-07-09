@@ -48,19 +48,20 @@ userController.profile = async (req, res) => {
 }
 
 userController.addProductToCart = async (req, res) => {
+    const currDate = new Date()
     try {
-        res.user.cart.concate([{
+        req.user.cart.push({
             productId: req.params.productId,
             quantity: req.query.quantity,
-            addedToCart: new Date()
-        }])
+            addedToCart: currDate
+        })
         await req.user.save()
         const product = await Product.findById({ _id: req.params.productId })
-        product.stock = product.stock - 1
+        product.stock = product.stock - parseInt(req.query.quantity)
         await product.save()
         res.send(req.user)
     } catch (e) {
-        res.status(500).send()
+        res.status(500).send(e)
     }
 }
 
@@ -87,7 +88,7 @@ userController.emptyCart = async (req, res) => {
 userController.getCartProducts = async (req, res) => {
     try {
         await req.user.populate('cart.productId').execPopulate()
-        res.send(user.cart)
+        res.send(req.user.cart)
     } catch (e) {
         res.status(500).send()
     }

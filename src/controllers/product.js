@@ -8,7 +8,7 @@ productController.addProduct = async (req, res) => {
     })
     try {
         await product.save()
-        res.status(201).send()
+        res.status(201).send(product)
     } catch (e) {
         res.status(400).send(e)
     }
@@ -16,9 +16,8 @@ productController.addProduct = async (req, res) => {
 
 productController.getOwnProducts = async (req, res) => {
     try {
-        const products = await Product.find({ addedBy: req.provider._id })
-        if (!products) return res.status(404).send()
-        res.send(products)
+        await req.provider.populate('products').execPopulate()
+        res.send(req.provider.products)
     } catch (e) {
         res.status(500).send()
     }
@@ -38,16 +37,11 @@ productController.getAllProducts = async (req, res) => {
     }
 
     try {
-        await req.provider.populate({
-            path: 'products',
-            match,
-            options: {
-                limit: parseInt(req.query.limit),
-                skip: parseInt(req.query.skip),
-                sort
-            }
-        }).execPopulate()
-        res.send(req.provider.products)
+        const products = await Product.find(match)
+            .limit(parseInt(req.query.limit))
+            .skip(parseInt(req.query.skip))
+            .sort(sort)
+        res.send(products)
     } catch (e) {
         res.status(500).send()
     }
@@ -82,7 +76,7 @@ productController.updateProduct = async (req, res) => {
 
 productController.deleteProduct = async (req, res) => {
     try {
-        const product = await Product.findOneAndDelete({ _id: req.params.id, addedBy: req.provider._id })
+        const product = await Product.findOneAndDelete({ _id: req.params.productId, addedBy: req.provider._id })
         if (!product) return res.status(404).send()
         res.send(product)
     } catch (e) {
