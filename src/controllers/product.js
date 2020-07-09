@@ -55,7 +55,7 @@ productController.getAllProducts = async (req, res) => {
 
 productController.getProduct = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id)
+        const product = await Product.findById(req.params.productId)
         if (!product) res.status(404).send()
         res.send(product)
     } catch (e) {
@@ -71,7 +71,7 @@ productController.updateProduct = async (req, res) => {
     if (!isValidUpdate) return res.status(400).send({ error: "Invalid update!" })
 
     try {
-        const product = await Product.findById({ _id: req.params.id })
+        const product = await Product.findById({ _id: req.params.productId })
         updates.forEach(update => product[update] = req.body[update])
         await product.save()
         res.send(product)

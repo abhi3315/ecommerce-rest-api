@@ -64,6 +64,26 @@ userController.addProductToCart = async (req, res) => {
     }
 }
 
+userController.removeProductFromCart = async (req, res) => {
+    try {
+        req.user.cart = req.user.cart.filter(product => product.productId !== req.params.productId)
+        await req.user.save()
+        res.send(req.user)
+    } catch (e) {
+        res.status(500).send()
+    }
+}
+
+userController.emptyCart = async (req, res) => {
+    try {
+        req.user.cart = []
+        await req.user.save()
+        res.send(req.user)
+    } catch (e) {
+        res.status(500).send()
+    }
+}
+
 userController.getCartProducts = async (req, res) => {
     try {
         await req.user.populate('cart.productId').execPopulate()
